@@ -1,0 +1,45 @@
+{
+  "api": {
+    "base_url": "https://api.cnb.cool",
+    "endpoint": "/-/workspace/start",
+    "timeout": 30,
+    "retry_attempts": 3,
+    "retry_delay": 5
+  },
+  "schedule": {
+    "timezone": "Asia/Shanghai",
+    "cron_expression": "0 23 * * *",
+    "local_time": "07:00",
+    "description": "北京时间每天7点执行"
+  },
+  "environment": {
+    "production": {
+      "required_variables": [
+        "API_URL",
+        "REPO",
+        "API_KEY",
+        "BRANCH",
+        "REF"
+      ],
+      "description": "生产环境配置"
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "include_timestamps": true,
+    "log_requests": true,
+    "log_responses": true
+  },
+  "security": {
+    "mask_sensitive_data": true,
+    "sensitive_fields": [
+      "API_KEY",
+      "Authorization"
+    ]
+  },
+  "monitoring": {
+    "enable_health_check": true,
+    "health_check_endpoint": "/health",
+    "alert_on_failure": false
+  }
+}
