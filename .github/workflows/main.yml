@@ -1,0 +1,57 @@
+name: 定时API调用
+
+on:
+  schedule:
+    # 北京时间每天7点执行 (UTC时间每天23点)
+    - cron: '0 23 * * *'
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  api-call:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+
+    - name: 设置时区
+      run: |
+        sudo timedatectl set-timezone Asia/Shanghai
+        echo "当前时间: $(date)"
+
+    - name: 执行API调用
+      env:
+        API_URL: ${{ secrets.API_URL }}
+        API_KEY: ${{ secrets.API_KEY }}
+        BRANCH: ${{ secrets.BRANCH }}
+        REF: ${{ secrets.REF }}
+      run: |
+        # 构建完整的API端点
+        FULL_URL="${API_URL}/${{ secrets.REPO }}/-/workspace/start"
+
+        echo "准备调用API..."
+        echo "URL: $FULL_URL"
+        echo "分支: $BRANCH"
+        echo "引用: $REF"
+
+        # 执行curl请求
+        RESPONSE=$(curl -X POST "$FULL_URL" \
+          -H 'accept: application/json' \
+          -H "Authorization: $API_KEY" \
+          -H 'Content-Type: application/json' \
+          -d "{
+            \"branch\": \"$BRANCH\",
+            \"ref\": \"$REF\"
+          }")
+
+        echo "API响应:"
+        echo "$RESPONSE"
+
+        # 检查响应状态
+        if echo "$RESPONSE" | grep -q "error\|Error\|ERROR"; then
+          echo "API调用可能存在错误"
+          exit 1
+        else
+          echo "API调用成功完成"
+        fi
