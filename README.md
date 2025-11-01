@@ -18,9 +18,9 @@
 
 | 变量名 | 描述 | 示例值 |
 |--------|------|--------|
-| `API_URL` | API基础URL | `https://api.cnb.cool` |
-| `REPO` | 仓库路径 | `software_test/codetest` |
-| `API_KEY` | API密钥 | `9KS4p2Ofxa1246PR9BsQt7epGsD` |
+| `API_URL` | API基础URL | `https://api.example.com` |
+| `REPO` | 仓库路径 | `owner/repository` |
+| `API_KEY` | API密钥 | `your_api_key_here` |
 | `BRANCH` | 分支名称 | `main` |
 | `REF` | Git引用 | `refs/heads/main` |
 
@@ -52,7 +52,7 @@ ${API_URL}/${REPO}/-/workspace/start
 
 示例：
 ```
-https://api.cnb.cool/software_test/codetest/-/workspace/start
+https://api.example.com/owner/repository/-/workspace/start
 ```
 
 ## 项目结构
@@ -84,9 +84,10 @@ cd project
 在GitHub仓库中：
 
 1. 进入仓库的 **Settings**
-2. 选择 **Environments**
-3. 创建名为 `production` 的环境
-4. 在环境变量中添加上述必需的环境变量
+2. 选择 **Secrets and variables** > **Actions**
+3. 点击 **New repository secret**
+4. 添加上述必需的5个secrets
+5. 确保所有secrets都正确设置
 
 ### 3. 验证工作流
 
@@ -115,6 +116,8 @@ accept: application/json
 Content-Type: application/json
 ```
 
+**注意**: `Authorization` 头使用您设置的API密钥，请确保密钥的安全性。
+
 ### 请求体
 ```json
 {
@@ -133,18 +136,20 @@ Content-Type: application/json
 
 2. **环境变量未设置或为空**
    - **这是最常见的问题！**
-   - 确保所有必需的环境变量都在production环境中设置
+   - 确保所有必需的secrets都在Repository secrets中设置
    - 检查变量名称是否完全匹配（包括大小写）
-   - 确认环境变量值没有多余的前后空格
+   - 确认secrets值没有多余的前后空格
 
 3. **API调用失败**
    - 检查API密钥是否有效
    - 验证API端点URL是否正确
    - 查看响应内容中的错误信息
+   - 确认网络连接正常
 
 4. **权限问题**
    - 确保GitHub Actions有权限访问仓库
-   - 检查环境变量权限设置
+   - 检查secrets权限设置
+   - 确认API服务器可访问
 
 ### 环境变量调试
 
@@ -154,12 +159,7 @@ Content-Type: application/json
 ```
 GitHub仓库 → Settings → Secrets and variables → Actions → Repository secrets
 ```
-确保以下5个secrets都已正确设置：
-- `API_URL`
-- `REPO`
-- `API_KEY`
-- `BRANCH`
-- `REF`
+确保所有必需的secrets都已正确设置，包括API基础URL、仓库路径、API密钥、分支名称和Git引用。
 
 #### 2. 运行调试工作流
 项目包含一个专门的调试工作流 `.github/workflows/debug-secrets.yml`：
@@ -173,6 +173,7 @@ GitHub仓库 → Settings → Secrets and variables → Actions → Repository s
 - **值格式问题**: 确保API URL包含 `http://` 或 `https://`
 - **权限问题**: 确保GitHub Actions有权限访问secrets
 - **加密状态**: 确保secrets正确加密并保存
+- **敏感信息泄露**: 检查是否在代码或文档中意外暴露了敏感信息
 
 ### 调试步骤
 
@@ -189,6 +190,8 @@ GitHub仓库 → Settings → Secrets and variables → Actions → Repository s
 3. 确认secrets的加密状态
 4. 尝试在Environment secrets中设置（如果Repository secrets不工作）
 5. 检查GitHub Actions的权限设置
+6. 确保没有在代码或文档中暴露敏感信息
+7. 验证API端点的网络连接性
 
 ## 自定义配置
 
