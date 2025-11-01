@@ -10,6 +10,8 @@ jobs:
   api-call:
     runs-on: ubuntu-latest
     environment: production
+    env:
+      PYTHONIOENCODING: utf-8
 
     steps:
     - name: 检出代码
@@ -20,6 +22,16 @@ jobs:
         sudo timedatectl set-timezone Asia/Shanghai
         echo "当前时间: $(date)"
 
+    - name: 检查环境变量
+      run: |
+        echo "=== 检查环境变量 ==="
+        echo "API_URL: ${{ secrets.API_URL }}"
+        echo "REPO: ${{ secrets.REPO }}"
+        echo "API_KEY: ${{ secrets.API_KEY }}"
+        echo "BRANCH: ${{ secrets.BRANCH }}"
+        echo "REF: ${{ secrets.REF }}"
+        echo "========================="
+
     - name: 执行API调用
       env:
         API_URL: ${{ secrets.API_URL }}
@@ -28,6 +40,17 @@ jobs:
         BRANCH: ${{ secrets.BRANCH }}
         REF: ${{ secrets.REF }}
       run: |
+        # 检查环境变量是否已设置
+        if [[ -z "$API_URL" || -z "$REPO" || -z "$API_KEY" || -z "$BRANCH" || -z "$REF" ]]; then
+          echo "错误：缺少必需的环境变量"
+          echo "API_URL: $API_URL"
+          echo "REPO: $REPO"
+          echo "API_KEY: $API_KEY"
+          echo "BRANCH: $BRANCH"
+          echo "REF: $REF"
+          exit 1
+        fi
+
         # 构建完整的API端点
         FULL_URL="${API_URL}/${REPO}/-/workspace/start"
 
@@ -56,3 +79,9 @@ jobs:
         else
           echo "API调用成功完成"
         fi
+
+    - name: 执行结果
+      if: always()
+      run: |
+        echo "API调用任务执行完成"
+        echo "时间: $(date)"
