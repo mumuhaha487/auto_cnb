@@ -23,12 +23,13 @@ jobs:
     - name: 执行API调用
       env:
         API_URL: ${{ secrets.API_URL }}
+        REPO: ${{ secrets.REPO }}
         API_KEY: ${{ secrets.API_KEY }}
         BRANCH: ${{ secrets.BRANCH }}
         REF: ${{ secrets.REF }}
       run: |
         # 构建完整的API端点
-        FULL_URL="${API_URL}/${{ secrets.REPO }}/-/workspace/start"
+        FULL_URL="${API_URL}/${REPO}/-/workspace/start"
 
         echo "准备调用API..."
         echo "URL: $FULL_URL"
