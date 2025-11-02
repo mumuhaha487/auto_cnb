@@ -12,7 +12,7 @@
 
 ## 环境变量配置
 
-在GitHub仓库的Settings > Secrets and variables > Actions中配置以下secrets：
+在GitHub仓库的Settings > Environments中配置以下secrets：
 
 ### 必需的环境变量
 
