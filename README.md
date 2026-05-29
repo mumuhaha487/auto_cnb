@@ -18,7 +18,7 @@
 
 | 变量名 | 描述 | 示例值 |
 |--------|------|--------|
-| `API_URL` | API基础URL | `https://api.example.com` |
+| `API_URL` | API基础URL | `https://api.cnb.cool` |
 | `REPO` | 仓库路径 | `owner/repository` |
 | `API_KEY` | API密钥 | `your_api_key_here` |
 | `BRANCH` | 分支名称 | `main` |
